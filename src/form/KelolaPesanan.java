@@ -21,10 +21,6 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Objects;
 
-/**
- *
- * @author FH6CLUE
- */
 public class KelolaPesanan extends javax.swing.JFrame {
 
     Object[] barangColumnNames = new Object[]{"ID Barang Pesanan","Barcode","Nama Barang","Jumlah Barang","Tanggal Expired"};
@@ -92,18 +88,18 @@ public class KelolaPesanan extends javax.swing.JFrame {
     
     public void searchPesanan(){
         String searchPesananSQL =
-                "SELECT p.id_pesanan, p.tanggal_pesan, p.tanggal_terima, p.status FROM pesanan p " +
-                        "LEFT JOIN barang_pesanan bp USING(id_pesanan) " +
-                        "WHERE id_pesanan = ? " +
-                        "OR status LIKE ? OR bp.barcode LIKE ? OR bp.nama_barang LIKE ?";
+                "SELECT DISTINCT p.id_pesanan, p.tanggal_pesan, p.tanggal_terima, p.status FROM pesanan p " +
+                        "LEFT JOIN barang_pesanan bp on p.id_pesanan = bp.id_pesanan " +
+                        "WHERE p.id_pesanan = ? " +
+                        "OR p.status LIKE ? OR bp.barcode LIKE ? OR bp.nama_barang LIKE ?";
         try (
             Connection con = Objects.requireNonNull(ds).getConnection();
             PreparedStatement preparedStatement = con.prepareStatement(searchPesananSQL)
         ){
             preparedStatement.setString(1, cariField.getText());
-            preparedStatement.setString(2, cariField.getText());
-            preparedStatement.setString(3, cariField.getText());
-            preparedStatement.setString(4, cariField.getText());
+            preparedStatement.setString(2, "%"+cariField.getText()+"%");
+            preparedStatement.setString(3, cariField.getText()+"%");
+            preparedStatement.setString(4, "%"+cariField.getText()+"%");
             try(ResultSet result = preparedStatement.executeQuery()){
                 DefaultTableModel tableModel = new DefaultTableModel(pesananColumnNames, 0){
                     @Override
@@ -199,17 +195,7 @@ public class KelolaPesanan extends javax.swing.JFrame {
         idField.setText((String) tableModel.getValueAt(selectedRow, 0));
         idField.setToolTipText((String) tableModel.getValueAt(selectedRow, 3));
     }
-    
-    public void rollbackConnection(boolean AutoCommitState){
-        try(Connection con = Objects.requireNonNull(ds).getConnection()){
-            if(!con.getAutoCommit()){
-                con.rollback();
-                con.setAutoCommit(AutoCommitState);
-            }
-        }catch(SQLException e){
-            e.printStackTrace();
-        }
-    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -234,7 +220,6 @@ public class KelolaPesanan extends javax.swing.JFrame {
         clearCariButton = new javax.swing.JButton();
         cariButton = new javax.swing.JButton();
         javax.swing.JButton hapusButton = new javax.swing.JButton();
-        javax.swing.JButton refreshButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -395,16 +380,6 @@ public class KelolaPesanan extends javax.swing.JFrame {
             }
         });
 
-        refreshButton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        refreshButton.setText("Refresh");
-        refreshButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        refreshButton.setPreferredSize(new java.awt.Dimension(70, 23));
-        refreshButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refreshButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -425,8 +400,6 @@ public class KelolaPesanan extends javax.swing.JFrame {
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 726, Short.MAX_VALUE)))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(refreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
                         .addComponent(hapusButton, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(20, 20, 20))
         );
@@ -442,9 +415,7 @@ public class KelolaPesanan extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(hapusButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(refreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(hapusButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -510,7 +481,6 @@ public class KelolaPesanan extends javax.swing.JFrame {
             }
 
         }
-        rollbackConnection(false);
         String delPesanan = "DELETE barang_pesanan, pesanan FROM barang_pesanan LEFT JOIN pesanan using(id_pesanan) WHERE id_pesanan = ?";
         try(
                 Connection con = Objects.requireNonNull(ds).getConnection();
@@ -518,22 +488,14 @@ public class KelolaPesanan extends javax.swing.JFrame {
         ){
             ps.setString(1, idPesanan);
             ps.executeUpdate();
-            if (!con.getAutoCommit()){
-                con.commit();
-            }
         }catch (SQLException e){
             e.printStackTrace();
-            rollbackConnection(false);
         }
     }//GEN-LAST:event_hapusButtonActionPerformed
 
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
         clearField();
     }//GEN-LAST:event_clearButtonActionPerformed
-
-    private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
-        clearCariButtonActionPerformed(null);
-    }//GEN-LAST:event_refreshButtonActionPerformed
 
     private void cariButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cariButtonActionPerformed
         searchPesanan();
@@ -545,7 +507,6 @@ public class KelolaPesanan extends javax.swing.JFrame {
     }//GEN-LAST:event_clearCariButtonActionPerformed
 
     private void kembaliButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kembaliButtonActionPerformed
-        rollbackConnection(true);
         new MainMenu().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_kembaliButtonActionPerformed
@@ -553,14 +514,13 @@ public class KelolaPesanan extends javax.swing.JFrame {
     private void pesananTabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pesananTabelMouseClicked
         if(evt.getClickCount() > 1){
             fillField();
-            rollbackConnection(false);
         }
     }//GEN-LAST:event_pesananTabelMouseClicked
 
     private void editBarangButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBarangButtonActionPerformed
         if (!idField.getText().equals("")) {
             TableModel tableModel = barangTabel.getModel();
-            EditBarang editBarang = new EditBarang(this, ds, tableModel, idField.getText());
+            EditBarang editBarang = new EditBarang(this, tableModel, idField.getText());
             editBarang.setVisible(true);
         }else {
             JOptionPane.showMessageDialog(rootPane,
@@ -569,9 +529,6 @@ public class KelolaPesanan extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_editBarangButtonActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

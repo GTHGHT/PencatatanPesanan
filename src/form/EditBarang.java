@@ -26,15 +26,14 @@ public class EditBarang extends javax.swing.JDialog {
 
     String idPesanan;
     DefaultTableModel tableModel;
-    DataSource ds;
+    DataSource ds = MysqlDataSource.getDataSource();
 
-    public EditBarang(java.awt.Frame parent, DataSource ds, TableModel tableModel, String idPesanan) {
+    public EditBarang(java.awt.Frame parent, TableModel tableModel, String idPesanan) {
         super(parent, true);
         initComponents();
         barangTabel.setModel(tableModel);
         this.tableModel = (DefaultTableModel) tableModel;
         this.idPesanan = idPesanan;
-        this.ds = ds;
     }
 
     public void clearField(){
@@ -306,13 +305,12 @@ public class EditBarang extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_tambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambahActionPerformed
-        DataSource ds = MysqlDataSource.getDataSource();
         String tambahPesananSql = "INSERT INTO barang_pesanan(id_pesanan, barcode, nama_barang, jumlah_barang) VALUES (?,?,?,?)";
         try (
                 Connection con = Objects.requireNonNull(ds).getConnection();
                 PreparedStatement ps = con.prepareStatement(tambahPesananSql, PreparedStatement.RETURN_GENERATED_KEYS)
         ){
-            con.setAutoCommit(false);
+            ps.setString(1, idPesanan);
             ps.setString(1, idPesanan);
             ps.setString(2, barcodeField.getText());
             ps.setString(3, namaField.getText());
@@ -337,13 +335,11 @@ public class EditBarang extends javax.swing.JDialog {
     }//GEN-LAST:event_btn_tambahActionPerformed
 
     private void btn_editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editActionPerformed
-        DataSource ds = MysqlDataSource.getDataSource();
         String updatePesananSql = "UPDATE barang_pesanan SET barcode = ?, nama_barang = ?, jumlah_barang = ? WHERE id_barang_pesanan = ?";
         try (
                 Connection con = Objects.requireNonNull(ds).getConnection();
                 PreparedStatement ps = con.prepareStatement(updatePesananSql)
         ){
-            con.setAutoCommit(false);
             ps.setString(1, barcodeField.getText());
             ps.setString(2, namaField.getText());
             ps.setObject(3, jumlahSpinner.getValue());
@@ -360,13 +356,11 @@ public class EditBarang extends javax.swing.JDialog {
     }//GEN-LAST:event_btn_editActionPerformed
 
     private void btn_hapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_hapusActionPerformed
-        DataSource ds = MysqlDataSource.getDataSource();
         String hapusPesananSql = "DELETE FROM barang_pesanan WHERE id_barang_pesanan = ?";
         try (
                 Connection con = Objects.requireNonNull(ds).getConnection();
                 PreparedStatement ps = con.prepareStatement(hapusPesananSql)
         ) {
-            con.setAutoCommit(false);
             ps.setString(1, idField.getText());
             ps.executeUpdate();
             tableModel.removeRow(findBarangRow(idField.getText()));
