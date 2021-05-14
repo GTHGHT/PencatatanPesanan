@@ -19,13 +19,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.Objects;
 
 public class KelolaPesanan extends javax.swing.JFrame {
 
-    Object[] barangColumnNames = new Object[]{"ID Barang Pesanan","Barcode","Nama Barang","Jumlah Barang","Tanggal Expired"};
-    Object[] pesananColumnNames = new Object[]{"ID Pesanan", "Tanggal Pesan", "Tanggal Terima", "Status"};
-    DataSource ds = MysqlDataSource.getDataSource();
+    private final Object[] barangColumnNames = new Object[]{"ID Barang Pesanan","Barcode","Nama Barang","Jumlah Barang","Tanggal Expired"};
+    private final Object[] pesananColumnNames = new Object[]{"ID Pesanan", "Tanggal Pesan", "Tanggal Terima", "Status"};
+    private final DataSource ds = MysqlDataSource.getDataSource();
 
     public KelolaPesanan() {
         initComponents();
@@ -46,10 +45,10 @@ public class KelolaPesanan extends javax.swing.JFrame {
         loadPesanan();
     }
 
-    public void loadPesanan(){
+    private void loadPesanan(){
         String loadPesananSQL = "SELECT p.id_pesanan, p.tanggal_pesan, p.tanggal_terima, p.status FROM pesanan p";
         try (
-             Connection con = Objects.requireNonNull(ds).getConnection();
+             Connection con = ds.getConnection();
              PreparedStatement preparedStatement = con.prepareStatement(loadPesananSQL);
              ResultSet result = preparedStatement.executeQuery()
         ){
@@ -86,14 +85,14 @@ public class KelolaPesanan extends javax.swing.JFrame {
 
     }
     
-    public void searchPesanan(){
+    private void searchPesanan(){
         String searchPesananSQL =
                 "SELECT DISTINCT p.id_pesanan, p.tanggal_pesan, p.tanggal_terima, p.status FROM pesanan p " +
                         "LEFT JOIN barang_pesanan bp on p.id_pesanan = bp.id_pesanan " +
                         "WHERE p.id_pesanan = ? " +
                         "OR p.status LIKE ? OR bp.barcode LIKE ? OR bp.nama_barang LIKE ?";
         try (
-            Connection con = Objects.requireNonNull(ds).getConnection();
+            Connection con = ds.getConnection();
             PreparedStatement preparedStatement = con.prepareStatement(searchPesananSQL)
         ){
             preparedStatement.setString(1, cariField.getText());
@@ -136,11 +135,11 @@ public class KelolaPesanan extends javax.swing.JFrame {
         }
     }
 
-    public void loadBarang(){
+    private void loadBarang(){
         String loadBarangSql = "Select bp.id_barang_pesanan, bp.barcode, bp.nama_barang, bp.jumlah_barang, bp.expired " +
                 "FROM barang_pesanan bp LEFT JOIN pesanan USING(id_pesanan) WHERE id_pesanan = ?";
         try(
-                Connection con = Objects.requireNonNull(ds).getConnection();
+                Connection con = ds.getConnection();
                 PreparedStatement ps = con.prepareStatement(loadBarangSql)
         ){
             ps.setString(1, idField.getText());
@@ -172,7 +171,7 @@ public class KelolaPesanan extends javax.swing.JFrame {
         }
     }
 
-    public void clearField(){
+    private void clearField(){
         cariField.setText("");
         idField.setText("");
         idField.setToolTipText("");
@@ -189,7 +188,7 @@ public class KelolaPesanan extends javax.swing.JFrame {
         });
     }
 
-    public void fillField(){
+    private void fillField(){
         DefaultTableModel tableModel = (DefaultTableModel) pesananTabel.getModel();
         int selectedRow = pesananTabel.getSelectedRow();
         idField.setText((String) tableModel.getValueAt(selectedRow, 0));
@@ -483,7 +482,7 @@ public class KelolaPesanan extends javax.swing.JFrame {
         }
         String delPesanan = "DELETE barang_pesanan, pesanan FROM barang_pesanan LEFT JOIN pesanan using(id_pesanan) WHERE id_pesanan = ?";
         try(
-                Connection con = Objects.requireNonNull(ds).getConnection();
+                Connection con = ds.getConnection();
                 PreparedStatement ps = con.prepareStatement(delPesanan)
         ){
             ps.setString(1, idPesanan);
@@ -518,14 +517,18 @@ public class KelolaPesanan extends javax.swing.JFrame {
     }//GEN-LAST:event_pesananTabelMouseClicked
 
     private void editBarangButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBarangButtonActionPerformed
-        if (!idField.getText().equals("")) {
-            TableModel tableModel = barangTabel.getModel();
-            EditBarang editBarang = new EditBarang(this, tableModel, idField.getText());
-            editBarang.setVisible(true);
-        }else {
+        if (idField.getText().equals("")) {
             JOptionPane.showMessageDialog(rootPane,
                     "ID Pesanan Kosong, Silahkan Pilih Pesanan Terlebih Dahulu",
                     "Aksi Ditolak",JOptionPane.WARNING_MESSAGE);
+        }else if (idField.getToolTipText().equals("Sudah Diterima")) {
+            JOptionPane.showMessageDialog(rootPane,
+                    "Pesanan Sudah Diterima, Tidak Bisa Diubah Atau Dihapus.",
+                    "Aksi Ditolak",JOptionPane.WARNING_MESSAGE);
+        }else {
+            TableModel tableModel = barangTabel.getModel();
+            EditBarang editBarang = new EditBarang(this, tableModel, idField.getText());
+            editBarang.setVisible(true);
         }
     }//GEN-LAST:event_editBarangButtonActionPerformed
 

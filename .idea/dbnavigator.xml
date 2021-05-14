@@ -26,7 +26,7 @@
     <show-object-properties value="true" />
     <loaded-nodes>
       <connection connection-id="50c87e7f-ef5a-4d99-9175-55ff1139d3df">
-        <schema name="db_pesanan" object-types="table, dataset trigger, constraint, function, column, view, index, procedure" />
+        <schema name="db_pesanan" object-types="index, constraint, function, table, view, procedure, dataset trigger, column" />
       </connection>
     </loaded-nodes>
   </component>

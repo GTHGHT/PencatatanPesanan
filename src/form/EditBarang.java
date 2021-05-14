@@ -1,10 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package form;
-
 
 import util.MysqlDataSource;
 
@@ -24,9 +18,9 @@ import java.util.Vector;
  */
 public class EditBarang extends javax.swing.JDialog {
 
-    String idPesanan;
-    DefaultTableModel tableModel;
-    DataSource ds = MysqlDataSource.getDataSource();
+    private final String idPesanan;
+    private final DefaultTableModel tableModel;
+    private final DataSource ds = MysqlDataSource.getDataSource();
 
     public EditBarang(java.awt.Frame parent, TableModel tableModel, String idPesanan) {
         super(parent, true);
@@ -36,14 +30,14 @@ public class EditBarang extends javax.swing.JDialog {
         this.idPesanan = idPesanan;
     }
 
-    public void clearField(){
+    private void clearField(){
         idField.setText("");
         barcodeField.setText("");
         namaField.setText("");
         jumlahSpinner.setValue(0);
     }
 
-    public void fillField(){
+    private void fillField(){
         int selectedRow = barangTabel.getSelectedRow();
         idField.setText((String) tableModel.getValueAt(selectedRow, 0));
         barcodeField.setText((String) tableModel.getValueAt(selectedRow, 1));
@@ -51,7 +45,7 @@ public class EditBarang extends javax.swing.JDialog {
         jumlahSpinner.setValue(Integer.parseInt(tableModel.getValueAt(selectedRow, 3).toString()));
     }
 
-    public int findBarangRow(String idBarang){
+    private int findBarangRow(String idBarang){
         Vector<Vector> tableValue = tableModel.getDataVector();
         int i = 0;
         for (Vector vector : tableValue) {

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package form;
 
 import util.MysqlDataSource;
@@ -405,13 +400,14 @@ public class TambahPesanan extends javax.swing.JFrame {
                 }
                 con.commit();
 
-                JOptionPane.showMessageDialog(rootPane, "Pencatatan Pesanan Berhasil, Kembali Ke Menu", "Pesanan Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                kembaliButton.doClick();
+                JOptionPane.showMessageDialog(rootPane, "Pencatatan Pesanan Berhasil, Kembali Ke Menu Utama", "Pencatatan Berhasil", JOptionPane.INFORMATION_MESSAGE);
             }catch (SQLException e){
                 e.printStackTrace();
+                JOptionPane.showMessageDialog(rootPane, "Pencatatan Pesanan Gagal, Kembali Ke Menu Utama", "Pencatatan Gagal", JOptionPane.ERROR_MESSAGE);
                 con.rollback();
             } finally {
                 con.setAutoCommit(true);
+                kembaliButton.doClick();
             }
 
         }catch (SQLException e){
