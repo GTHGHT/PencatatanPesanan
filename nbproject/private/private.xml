@@ -2,6 +2,14 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/D:/Project/Java/PencatatanPesanan/src/form/EditBarang.java</file>
+            <file>file:/D:/Project/Java/PencatatanPesanan/src/form/KelolaPesanan.java</file>
+            <file>file:/D:/Project/Java/PencatatanPesanan/src/form/TerimaPesanan.java</file>
+            <file>file:/D:/Project/Java/PencatatanPesanan/src/form/TambahPesanan.java</file>
+            <file>file:/D:/Project/Java/PencatatanPesanan/src/form/SelectPesanan.java</file>
+            <file>file:/D:/Project/Java/PencatatanPesanan/src/form/MainMenu.java</file>
+            <file>file:/D:/Project/Java/PencatatanPesanan/src/form/Login.java</file>
+        </group>
     </open-files>
 </project-private>

@@ -1,6 +1,7 @@
 package form;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import util.ImageResizer;
 import util.MysqlDataSource;
 
 import javax.sql.DataSource;
@@ -27,6 +28,9 @@ public class Login extends javax.swing.JFrame {
                 loginUser();
             }
         });
+        System.out.println(this.getClass().getResource("/img/logo3.png"));
+
+        logoLabel.setIcon(ImageResizer.resizeImage(this.getClass().getResource("/img/logo3.png"), logoLabel.getWidth(), logoLabel.getHeight()));
     }
 
     public void loginUser(){
