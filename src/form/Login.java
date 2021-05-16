@@ -28,9 +28,8 @@ public class Login extends javax.swing.JFrame {
                 loginUser();
             }
         });
-        System.out.println(this.getClass().getResource("/img/logo3.png"));
 
-        logoLabel.setIcon(ImageResizer.resizeImage(this.getClass().getResource("/img/logo3.png"), logoLabel.getWidth(), logoLabel.getHeight()));
+        logoLabel.setIcon(ImageResizer.resizeImage(this.getClass().getResource("/img/logo1.png"), logoLabel.getWidth()-50, logoLabel.getHeight()-50));
     }
 
     public void loginUser(){
